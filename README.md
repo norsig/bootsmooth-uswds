@@ -1,17 +1,17 @@
 # Bootsmooth US Standards Wordpress Theme
 
-A Wordpress Starter Theme built with the [Timber Starter Theme](https://github.com/timber/starter-theme).
+A Wordpress Theme based on the [Timber Starter Theme](https://github.com/timber/starter-theme).
 
 # Features
 
-* Modern build system for your WordPress stylesheets and javascript sources using Node, Gulp and Sass
-* Page layouts built with Timber, a plugin to write WordPress themes with object-oriented code and the Twig Template Engine
+* Gulp build system for compiling SCSS and ES6 sources
+* Page layouts built with Twig templates using the Timber WordPress plugin
 
 ## Installation and setup
 
 1. Open a terminal and change to your wp-content/themes folder
 2. Clone the repository: git clone https://github.com/cpearson3/bootsmooth-uswds.git
-3. Install node, npm, bower, and gulp
+3. Install node, npm, and gulp
 4. Install project dependencies: npm install
 5. Build stylesheet and javascript: gulp build
 
@@ -25,8 +25,6 @@ A Wordpress Starter Theme built with the [Timber Starter Theme](https://github.c
 ## Customizing the stylesheet
 
 The main stylesheet source lives in **scss/style.scss** and is compiled to **style.css**.
-
-Here is where you can import Sass libraries, define variables, and create new styles.
 
 ## License
 
