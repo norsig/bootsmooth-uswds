@@ -1,0 +1,12 @@
+<h6 class="usa-heading-alt">Quick Links</h6>
+<ul class="usa-sidenav-list">
+{% for item in quicklinks.get_items %}
+    <li><a href="{{item.get_link}}">{{item.title}}</a></li>
+{% endfor %}
+</ul>
+<h6 class="usa-heading-alt">Latest Posts</h6>
+{% filter shortcodes %}
+[blogs]
+{% endfilter %}
+<h6 class="usa-heading-alt">Search</h6>
+{% include "form-search.twig" %}

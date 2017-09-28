@@ -1,0 +1,14 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<div class="usa-grid usa-section">
+<article class="post-type-{{post.post_type}}" id="post-{{post.ID}}">
+    <h1>{{post.title}}</h1>
+    <p class="usa-heading-alt">{{post.date | date}}</p>
+	{{post.content}}
+</article>
+<aside>
+{% include 'sidebar.twig' %}
+</aside>
+</div>
+{% endblock %}

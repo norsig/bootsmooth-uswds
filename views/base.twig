@@ -1,0 +1,65 @@
+{% block html_head_container %}
+{% include 'html-header.twig' %}
+	{% block head %}
+	{% endblock %}
+	</head>
+{% endblock %}
+<body class="{{body_class}}" data-template="base.twig">
+	{% block navigtion %}
+	<a class="usa-skipnav" href="#main-content">Skip to main content</a>
+	<header class="usa-header usa-header-basic" role="banner" id="main-header">
+	  <div class="usa-nav-container">
+	    <div class="usa-navbar">
+	      <button class="usa-menu-btn"><i class="fa fa-bars"></i></button>
+	      <div class="usa-logo" id="logo">
+	        <em class="usa-logo-text">
+	          <a href="{{site.url}}" accesskey="1" title="Home" aria-label="{{site.title}}">{{site.title}}</a>
+	        </em>
+	      </div>
+	    </div>
+	    <nav role="navigation" class="usa-nav">
+	      <button class="usa-nav-close">
+	        <i class="fa fa-close"></i>
+	      </button>
+	      <ul class="usa-nav-primary usa-accordion">
+	      	{% for item in menu.get_items %}
+	        <li class="{{item.classes | join(' ')}}">
+        	{% if item.get_children %}
+	        	<button class="usa-accordion-button usa-nav-link" aria-expanded="false" aria-controls="{{item.title|replace({' ': '-'}) }}-nav">
+	            	<span>{{item.title}}</span>
+	         	 </button>
+		         <ul id="{{item.title|replace({' ': '-'}) }}-nav" class="usa-nav-submenu">
+	         	 {% for child in item.get_children %}
+		            <li>
+		              <a href="{{child.get_link}}">{{child.title}}</a>
+		            </li>
+	              {% endfor %}
+	            </ul>
+            {% else %}
+				<a class="usa-nav-link" href="{{item.get_link}}">
+					<span>{{item.title}}</span>
+				</a>
+            {% endif %}
+	        </li>
+	        {% endfor %}
+	      </ul>
+	      {% include "form-search.twig" %}
+	    </nav>
+	  </div>
+	</header>
+	{% endblock %}
+
+	<div class="usa-overlay"></div>
+  	<main id="main-content" role="main">
+	{% block content %}
+		Sorry, no content
+	{% endblock %}
+	</main>
+
+	{% block footer %}
+	{% include 'footer.twig' %}
+	{{ function('wp_footer') }}
+	{% endblock %}
+	<script src="{{site.theme.link}}/dist/build.js"></script>
+</body>
+</html>

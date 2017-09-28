@@ -1,0 +1,94 @@
+/*!
+Theme Name: Bootsmooth USWDS
+Theme URI: http://bootsmooth.com/wordpress-theme/
+Author: Clarence Pearson
+Author URI:  http://bootsmooth.com/author
+Description: WordPress Theme for Developers
+Version: 1.0.0
+License: GPL 
+License URI: http://bootsmooth.com/license
+Text Domain: 
+Tags:
+*/
+
+@import "variables";
+@import "./node_modules/uswds/src/stylesheets/uswds";
+
+@mixin span-responsive($cols) {
+    @include span-columns($cols);
+    @media (max-width: $small-screen) {
+       @include span-columns(12);
+   }
+}
+
+// navbar
+@media screen and (min-width: 951px) {
+    .usa-header-basic .usa-navbar {
+            width: 25%;
+    }
+}    
+
+// nav links
+nav.usa-nav {
+    .usa-nav-close {
+        color: $color-primary;
+    }
+}
+
+// grid layout
+.usa-grid {
+    display: flex;
+    flex-wrap: wrap;
+    p {
+        width: 100%;
+    }
+    .one-third {
+        @include span-responsive(4);
+    }
+    .one-fourth {
+        @include span-responsive(3);
+    }
+    .one-half {
+        @include span-responsive(6);
+        margin-right: 1.1%;
+    }
+    .two-thirds {
+        @include span-responsive(8);
+    }
+    .three-fourths {
+        @include span-responsive(9);
+    }
+}
+
+.single {
+    article {
+       @include span-responsive(9);
+       
+    }
+    aside {
+        @include span-responsive(3);
+    }
+}
+
+footer {
+    .usa-footer-column {
+        @include span-responsive(2);
+    }
+    .usa-footer-content, .usa-footer-info {
+        @include span-responsive(6);
+    }
+}
+
+// blog post tease
+.tease img {
+    max-width: 100%;
+    height: auto;
+}
+
+// sidebar
+aside {
+    .usa-heading-alt {
+        // border-bottom: 1px solid #5b616b;
+        padding-bottom: .8rem;
+    }
+}
