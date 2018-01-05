@@ -3622,22 +3622,22 @@ input[type=search] {
     .usa-section-dark a:hover {
       color: #ffffff; }
 
-.usa-sidenav-list {
+.usa-sidenav-list, aside ul {
   margin-top: 0;
   margin-bottom: 0;
   list-style-type: none;
   padding-left: 0;
   border-bottom: 1px solid;
   border-top: 1px solid; }
-  .usa-sidenav-list > li {
+  .usa-sidenav-list > li, aside ul > li {
     margin-bottom: 0; }
-  .usa-sidenav-list > li {
+  .usa-sidenav-list > li, aside ul > li {
     background-color: transparent;
     border-top: 1px solid #5b616b;
     font-size: 1.7rem; }
-    .usa-sidenav-list > li:first-child {
+    .usa-sidenav-list > li:first-child, aside ul > li:first-child {
       border-top: none; }
-  .usa-sidenav-list a {
+  .usa-sidenav-list a, aside ul a {
     border: none;
     color: #212121;
     display: block;
@@ -3645,29 +3645,29 @@ input[type=search] {
     line-height: 1.3;
     padding: 0.85rem 1rem 0.85rem 1.5rem;
     text-decoration: none; }
-    .usa-sidenav-list a:hover {
+    .usa-sidenav-list a:hover, aside ul a:hover {
       background-color: #f1f1f1;
       color: #0071bc;
       text-decoration: none; }
-    .usa-sidenav-list a:focus {
+    .usa-sidenav-list a:focus, aside ul a:focus {
       outline-offset: 0;
       position: relative;
       z-index: 1; }
-    .usa-sidenav-list a.usa-current {
+    .usa-sidenav-list a.usa-current, aside ul a.usa-current {
       /* stylelint-disable-line selector-no-qualifying-type */
       border-left: 0.4rem solid #0071bc;
       color: #0071bc;
       font-weight: 700;
       padding-left: 1.1rem; }
   @media screen and (min-width: 1201px) {
-    .usa-sidenav-list {
+    .usa-sidenav-list, aside ul {
       border-bottom: none;
       border-top: none; } }
-  .usa-grid .usa-sidenav-list {
+  .usa-grid .usa-sidenav-list, .usa-grid aside ul, aside .usa-grid ul {
     margin-right: -1.5rem;
     margin-left: -1.5rem; }
     @media screen and (min-width: 600px) {
-      .usa-grid .usa-sidenav-list {
+      .usa-grid .usa-sidenav-list, .usa-grid aside ul, aside .usa-grid ul {
         margin-right: 0;
         margin-left: 0; } }
 
