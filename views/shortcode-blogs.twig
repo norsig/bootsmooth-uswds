@@ -1,5 +1,7 @@
-<ul class="usa-sidenav-list">
+<div class="usa-grid">
 {% for post in blogs %}
-    <li><a href="{{post.link}}">{{post.title}}</a></li>
+<div class="one-third">
+    <h5><a href="{{post.link}}">{{post.title}}</a></h5>
+</div>
 {% endfor %}
-</ul>
+</div>

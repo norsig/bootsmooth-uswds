@@ -1,48 +1,12 @@
 <footer class="usa-footer usa-footer-medium" role="contentinfo">
-  <div class="usa-grid usa-footer-return-to-top">
-    <a href="#main-header">Return to top</a>
-  </div>
-  <div class="usa-footer-primary-section">
-    <div class="usa-grid-full">
-      <nav class="usa-footer-nav">
-        <ul class="usa-unstyled-list">
-            {% for item in menu.get_items %}
-            <li class="usa-footer-column usa-footer-primary-content">
-            	<a class="usa-footer-primary-link" href="{{item.get_link}}">{{item.title}}</a>
-            </li>
-            {% endfor %}
-        </ul>
-      </nav>
-    </div>
-  </div>
-  <div class="usa-footer-secondary_section">
-    <div class="usa-grid">
-      <div class="usa-footer-logo usa-footer-content">
-        <img class="usa-footer-circle-124" src="http://placehold.it/200x200" alt="Logo image">
-        <h3 class="usa-footer-logo-heading">{{site.title}}</h3>
-      </div>
-      <div class="usa-footer-contact-links usa-footer-info">
-        <a class="usa-link-facebook" href="javascript:void(0);">
-          <span>Facebook</span>
-        </a>
-        <a class="usa-link-twitter" href="javascript:void(0);">
-          <span>Twitter</span>
-        </a>
-        <a class="usa-link-youtube" href="javascript:void(0);">
-          <span>YouTube</span>
-        </a>
-        <a class="usa-link-rss" href="javascript:void(0);">
-           <span>RSS</span>
-        </a>
-        <address>
-          <h3 class="usa-footer-contact-heading">Contact</h3>
-          <p>555 Street Address<br>
-          City, State, Zip
-          </p>
-          <p>555-5555</p></p>
-          <a href="#">email @ address dot com</a>
-        </address>
-      </div>
-    </div>
-  </div>
+	<div class="usa-grid usa-footer-return-to-top">
+		<a href="#main-header">Return to top</a>
+	</div>
+	<div class="usa-footer-primary-section">
+		<div class="usa-grid">
+			<p class="usa-footer-primary-content usa-footer-contact_info">
+			<a href="{{site.url}}/">{{site.title}}</a> | Copyright &copy; {{ "now"|date("Y") }}
+			</p>
+		</div>
+	</div>
 </footer>

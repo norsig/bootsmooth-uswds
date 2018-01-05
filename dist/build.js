@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
 	window.$bs = $bs;
 });
 
-},{"../node_modules/uswds/src/js/start":30}],2:[function(require,module,exports){
+},{"../node_modules/uswds/src/js/start":31}],2:[function(require,module,exports){
 
 /**
  * Array#filter.
@@ -830,6 +830,139 @@ module.exports = debounce;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],9:[function(require,module,exports){
+const assign = require('object-assign');
+const delegate = require('../delegate');
+const delegateAll = require('../delegateAll');
+
+const DELEGATE_PATTERN = /^(.+):delegate\((.+)\)$/;
+const SPACE = ' ';
+
+const getListeners = function(type, handler) {
+  var match = type.match(DELEGATE_PATTERN);
+  var selector;
+  if (match) {
+    type = match[1];
+    selector = match[2];
+  }
+
+  var options;
+  if (typeof handler === 'object') {
+    options = {
+      capture: popKey(handler, 'capture'),
+      passive: popKey(handler, 'passive')
+    };
+  }
+
+  var listener = {
+    selector: selector,
+    delegate: (typeof handler === 'object')
+      ? delegateAll(handler)
+      : selector
+        ? delegate(selector, handler)
+        : handler,
+    options: options
+  };
+
+  if (type.indexOf(SPACE) > -1) {
+    return type.split(SPACE).map(function(_type) {
+      return assign({type: _type}, listener);
+    });
+  } else {
+    listener.type = type;
+    return [listener];
+  }
+};
+
+var popKey = function(obj, key) {
+  var value = obj[key];
+  delete obj[key];
+  return value;
+};
+
+module.exports = function behavior(events, props) {
+  const listeners = Object.keys(events)
+    .reduce(function(memo, type) {
+      var listeners = getListeners(type, events[type]);
+      return memo.concat(listeners);
+    }, []);
+
+  return assign({
+    add: function addBehavior(element) {
+      listeners.forEach(function(listener) {
+        element.addEventListener(
+          listener.type,
+          listener.delegate,
+          listener.options
+        );
+      });
+    },
+    remove: function removeBehavior(element) {
+      listeners.forEach(function(listener) {
+        element.removeEventListener(
+          listener.type,
+          listener.delegate,
+          listener.options
+        );
+      });
+    }
+  }, props);
+};
+
+},{"../delegate":12,"../delegateAll":11,"object-assign":14}],10:[function(require,module,exports){
+module.exports = function compose(functions) {
+  return function(e) {
+    return functions.some(function(fn) {
+      return fn.call(this, e) === false;
+    }, this);
+  };
+};
+
+},{}],11:[function(require,module,exports){
+const delegate = require('../delegate');
+const compose = require('../compose');
+
+const SPLAT = '*';
+
+module.exports = function delegateAll(selectors) {
+  const keys = Object.keys(selectors)
+
+  // XXX optimization: if there is only one handler and it applies to
+  // all elements (the "*" CSS selector), then just return that
+  // handler
+  if (keys.length === 1 && keys[0] === SPLAT) {
+    return selectors[SPLAT];
+  }
+
+  const delegates = keys.reduce(function(memo, selector) {
+    memo.push(delegate(selector, selectors[selector]));
+    return memo;
+  }, []);
+  return compose(delegates);
+};
+
+},{"../compose":10,"../delegate":12}],12:[function(require,module,exports){
+// polyfill Element.prototype.closest
+require('element-closest');
+
+module.exports = function delegate(selector, fn) {
+  return function delegation(event) {
+    var target = event.target.closest(selector);
+    if (target) {
+      return fn.call(target, event);
+    }
+  }
+};
+
+},{"element-closest":7}],13:[function(require,module,exports){
+module.exports = function ignore(element, fn) {
+  return function ignorance(e) {
+    if (element !== e.target && !element.contains(e.target)) {
+      return fn.call(this, e);
+    }
+  };
+};
+
+},{}],14:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -921,139 +1054,6 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],10:[function(require,module,exports){
-const assign = require('object-assign');
-const delegate = require('../delegate');
-const delegateAll = require('../delegateAll');
-
-const DELEGATE_PATTERN = /^(.+):delegate\((.+)\)$/;
-const SPACE = ' ';
-
-const getListeners = function(type, handler) {
-  var match = type.match(DELEGATE_PATTERN);
-  var selector;
-  if (match) {
-    type = match[1];
-    selector = match[2];
-  }
-
-  var options;
-  if (typeof handler === 'object') {
-    options = {
-      capture: popKey(handler, 'capture'),
-      passive: popKey(handler, 'passive')
-    };
-  }
-
-  var listener = {
-    selector: selector,
-    delegate: (typeof handler === 'object')
-      ? delegateAll(handler)
-      : selector
-        ? delegate(selector, handler)
-        : handler,
-    options: options
-  };
-
-  if (type.indexOf(SPACE) > -1) {
-    return type.split(SPACE).map(function(_type) {
-      return assign({type: _type}, listener);
-    });
-  } else {
-    listener.type = type;
-    return [listener];
-  }
-};
-
-var popKey = function(obj, key) {
-  var value = obj[key];
-  delete obj[key];
-  return value;
-};
-
-module.exports = function behavior(events, props) {
-  const listeners = Object.keys(events)
-    .reduce(function(memo, type) {
-      var listeners = getListeners(type, events[type]);
-      return memo.concat(listeners);
-    }, []);
-
-  return assign({
-    add: function addBehavior(element) {
-      listeners.forEach(function(listener) {
-        element.addEventListener(
-          listener.type,
-          listener.delegate,
-          listener.options
-        );
-      });
-    },
-    remove: function removeBehavior(element) {
-      listeners.forEach(function(listener) {
-        element.removeEventListener(
-          listener.type,
-          listener.delegate,
-          listener.options
-        );
-      });
-    }
-  }, props);
-};
-
-},{"../delegate":12,"../delegateAll":13,"object-assign":9}],11:[function(require,module,exports){
-module.exports = function compose(functions) {
-  return function(e) {
-    return functions.some(function(fn) {
-      return fn.call(this, e) === false;
-    }, this);
-  };
-};
-
-},{}],12:[function(require,module,exports){
-// polyfill Element.prototype.closest
-require('element-closest');
-
-module.exports = function delegate(selector, fn) {
-  return function delegation(event) {
-    var target = event.target.closest(selector);
-    if (target) {
-      return fn.call(target, event);
-    }
-  }
-};
-
-},{"element-closest":7}],13:[function(require,module,exports){
-const delegate = require('../delegate');
-const compose = require('../compose');
-
-const SPLAT = '*';
-
-module.exports = function delegateAll(selectors) {
-  const keys = Object.keys(selectors)
-
-  // XXX optimization: if there is only one handler and it applies to
-  // all elements (the "*" CSS selector), then just return that
-  // handler
-  if (keys.length === 1 && keys[0] === SPLAT) {
-    return selectors[SPLAT];
-  }
-
-  const delegates = keys.reduce(function(memo, selector) {
-    memo.push(delegate(selector, selectors[selector]));
-    return memo;
-  }, []);
-  return compose(delegates);
-};
-
-},{"../compose":11,"../delegate":12}],14:[function(require,module,exports){
-module.exports = function ignore(element, fn) {
-  return function ignorance(e) {
-    if (element !== e.target && !element.contains(e.target)) {
-      return fn.call(this, e);
-    }
-  };
-};
-
 },{}],15:[function(require,module,exports){
 module.exports = function once(listener, options) {
   var wrapped = function wrappedOnce(e) {
@@ -1111,6 +1111,8 @@ module.exports = function resolveIds(ids, doc) {
 };
 
 },{}],17:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"dup":14}],18:[function(require,module,exports){
 'use strict';
 const behavior = require('../utils/behavior');
 const filter = require('array-filter');
@@ -1232,7 +1234,7 @@ Accordion.prototype.remove = function () {
 
 module.exports = Accordion;
 
-},{"../config":26,"../events":27,"../utils/behavior":31,"../utils/is-in-viewport":32,"../utils/toggle":36,"array-filter":2,"array-foreach":3,"object-assign":9}],18:[function(require,module,exports){
+},{"../config":27,"../events":28,"../utils/behavior":32,"../utils/is-in-viewport":33,"../utils/toggle":37,"array-filter":2,"array-foreach":3,"object-assign":17}],19:[function(require,module,exports){
 'use strict';
 const behavior = require('../utils/behavior');
 const toggle = require('../utils/toggle');
@@ -1255,7 +1257,7 @@ module.exports = behavior({
   },
 });
 
-},{"../config":26,"../events":27,"../utils/behavior":31,"../utils/toggle":36}],19:[function(require,module,exports){
+},{"../config":27,"../events":28,"../utils/behavior":32,"../utils/toggle":37}],20:[function(require,module,exports){
 'use strict';
 const accordion = require('./accordion');
 const behavior = require('../utils/behavior');
@@ -1317,7 +1319,7 @@ module.exports = behavior({
   },
 });
 
-},{"../config":26,"../events":27,"../utils/behavior":31,"../utils/select":33,"./accordion":17,"array-foreach":3,"lodash.debounce":8}],20:[function(require,module,exports){
+},{"../config":27,"../events":28,"../utils/behavior":32,"../utils/select":34,"./accordion":18,"array-foreach":3,"lodash.debounce":8}],21:[function(require,module,exports){
 module.exports = {
   accordion:  require('./accordion'),
   banner:     require('./banner'),
@@ -1330,7 +1332,7 @@ module.exports = {
 };
 
 
-},{"./accordion":17,"./banner":18,"./footer":19,"./navigation":21,"./password":22,"./search":23,"./skipnav":24,"./validator":25}],21:[function(require,module,exports){
+},{"./accordion":18,"./banner":19,"./footer":20,"./navigation":22,"./password":23,"./search":24,"./skipnav":25,"./validator":26}],22:[function(require,module,exports){
 'use strict';
 const behavior = require('../utils/behavior');
 const forEach = require('array-foreach');
@@ -1340,7 +1342,6 @@ const accordion = require('./accordion');
 const CLICK = require('../events').CLICK;
 const PREFIX = require('../config').prefix;
 
-const CONTEXT = 'header';
 const NAV = `.${PREFIX}-nav`;
 const NAV_LINKS = `${NAV} a`;
 const OPENERS = `.${PREFIX}-menu-btn`;
@@ -1352,25 +1353,49 @@ const TOGGLES = [ NAV, OVERLAY ].join(', ');
 const ACTIVE_CLASS = 'usa-mobile_nav-active';
 const VISIBLE_CLASS = 'is-visible';
 
+const isActive = () => document.body.classList.contains(ACTIVE_CLASS);
+
 const toggleNav = function (active) {
   const body = document.body;
   if (typeof active !== 'boolean') {
-    active = !body.classList.contains(ACTIVE_CLASS);
+    active = !isActive();
   }
   body.classList.toggle(ACTIVE_CLASS, active);
 
-  const context = this.closest(CONTEXT);
   forEach(select(TOGGLES), el => {
-    el.classList.toggle(VISIBLE_CLASS);
+    el.classList.toggle(VISIBLE_CLASS, active);
   });
 
-  if (active && context) {
-    const closeButton = context.querySelector(CLOSE_BUTTON);
-    if (closeButton) {
-      closeButton.focus();
-    }
+  const closeButton = body.querySelector(CLOSE_BUTTON);
+  const menuButton = body.querySelector(OPENERS);
+
+  if (active && closeButton) {
+    // The mobile nav was just activated, so focus on the close button,
+    // which is just before all the nav elements in the tab order.
+    closeButton.focus();
+  } else if (!active && document.activeElement === closeButton &&
+             menuButton) {
+    // The mobile nav was just deactivated, and focus was on the close
+    // button, which is no longer visible. We don't want the focus to
+    // disappear into the void, so focus on the menu button if it's
+    // visible (this may have been what the user was just focused on,
+    // if they triggered the mobile nav by mistake).
+    menuButton.focus();
   }
+
   return active;
+};
+
+const resize = () => {
+  const closer = document.body.querySelector(CLOSE_BUTTON);
+
+  if (isActive() && closer && closer.getBoundingClientRect().width === 0) {
+    // The mobile nav is active, but the close box isn't visible, which
+    // means the user's viewport has been resized so that it is no longer
+    // in mobile mode. Let's make the page state consistent by
+    // deactivating the mobile nav.
+    toggleNav.call(closer, false);
+  }
 };
 
 const navigation = behavior({
@@ -1390,10 +1415,18 @@ const navigation = behavior({
       }
 
       // If the mobile navigation menu is active, we want to hide it.
-      if (document.body.classList.contains(ACTIVE_CLASS)) {
-        toggleNav.call(this);
+      if (isActive()) {
+        toggleNav.call(this, false);
       }
     },
+  },
+}, {
+  init () {
+    resize();
+    window.addEventListener('resize', resize, false);
+  },
+  teardown () {
+    window.removeEventListener('resize', resize, false);
   },
 });
 
@@ -1408,7 +1441,7 @@ module.exports = assign(
   navigation
 );
 
-},{"../config":26,"../events":27,"../utils/behavior":31,"../utils/select":33,"./accordion":17,"array-foreach":3,"object-assign":9}],22:[function(require,module,exports){
+},{"../config":27,"../events":28,"../utils/behavior":32,"../utils/select":34,"./accordion":18,"array-foreach":3,"object-assign":17}],23:[function(require,module,exports){
 'use strict';
 const behavior = require('../utils/behavior');
 const toggleFormInput = require('../utils/toggle-form-input');
@@ -1429,7 +1462,7 @@ module.exports = behavior({
   },
 });
 
-},{"../config":26,"../events":27,"../utils/behavior":31,"../utils/toggle-form-input":35}],23:[function(require,module,exports){
+},{"../config":27,"../events":28,"../utils/behavior":32,"../utils/toggle-form-input":36}],24:[function(require,module,exports){
 'use strict';
 const behavior = require('../utils/behavior');
 const forEach = require('array-foreach');
@@ -1525,7 +1558,7 @@ module.exports = assign(
   search
 );
 
-},{"../config":26,"../events":27,"../utils/behavior":31,"../utils/select":33,"array-foreach":3,"object-assign":9,"receptor/ignore":14}],24:[function(require,module,exports){
+},{"../config":27,"../events":28,"../utils/behavior":32,"../utils/select":34,"array-foreach":3,"object-assign":17,"receptor/ignore":13}],25:[function(require,module,exports){
 'use strict';
 const behavior = require('../utils/behavior');
 const once = require('receptor/once');
@@ -1555,7 +1588,7 @@ module.exports = behavior({
   },
 });
 
-},{"../config":26,"../events":27,"../utils/behavior":31,"receptor/once":15}],25:[function(require,module,exports){
+},{"../config":27,"../events":28,"../utils/behavior":32,"receptor/once":15}],26:[function(require,module,exports){
 'use strict';
 const behavior = require('../utils/behavior');
 const validate = require('../utils/validate-input');
@@ -1582,12 +1615,12 @@ module.exports = assign(
   validator
 );
 
-},{"../utils/behavior":31,"../utils/validate-input":37,"lodash.debounce":8,"object-assign":9}],26:[function(require,module,exports){
+},{"../utils/behavior":32,"../utils/validate-input":38,"lodash.debounce":8,"object-assign":17}],27:[function(require,module,exports){
 module.exports = {
   prefix: 'usa',
 };
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = {
   // This used to be conditionally dependent on whether the
   // browser supported touch events; if it did, `CLICK` was set to
@@ -1604,7 +1637,7 @@ module.exports = {
   CLICK: 'click',
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 const elproto = window.HTMLElement.prototype;
 const HIDDEN = 'hidden';
@@ -1624,14 +1657,14 @@ if (!(HIDDEN in elproto)) {
   });
 }
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 // polyfills HTMLElement.prototype.classList and DOMTokenList
 require('classlist-polyfill');
 // polyfills HTMLElement.prototype.hidden
 require('./element-hidden');
 
-},{"./element-hidden":28,"classlist-polyfill":4}],30:[function(require,module,exports){
+},{"./element-hidden":29,"classlist-polyfill":4}],31:[function(require,module,exports){
 'use strict';
 const domready = require('domready');
 
@@ -1656,7 +1689,7 @@ domready(() => {
 
 module.exports = uswds;
 
-},{"./components":20,"./config":26,"./polyfills":29,"domready":5}],31:[function(require,module,exports){
+},{"./components":21,"./config":27,"./polyfills":30,"domready":5}],32:[function(require,module,exports){
 'use strict';
 const assign = require('object-assign');
 const forEach = require('array-foreach');
@@ -1689,7 +1722,7 @@ module.exports = (events, props) => {
   }, props));
 };
 
-},{"array-foreach":3,"object-assign":9,"receptor/behavior":10}],32:[function(require,module,exports){
+},{"array-foreach":3,"object-assign":17,"receptor/behavior":9}],33:[function(require,module,exports){
 // https://stackoverflow.com/a/7557433
 function isElementInViewport (el, win=window,
                               docEl=document.documentElement) {
@@ -1705,7 +1738,7 @@ function isElementInViewport (el, win=window,
 
 module.exports = isElementInViewport;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1740,7 +1773,7 @@ module.exports = function select (selector, context) {
   return Array.prototype.slice.call(selection);
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * Flips given INPUT elements between masked (hiding the field value) and unmasked
  * @param {Array.HTMLElement} fields - An array of INPUT elements
@@ -1752,7 +1785,7 @@ module.exports = (field, mask) => {
   field.setAttribute('type', mask ? 'password' : 'text');
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 const forEach = require('array-foreach');
 const resolveIdRefs = require('resolve-id-refs');
@@ -1806,7 +1839,7 @@ module.exports = el => {
   return pressed;
 };
 
-},{"./select":33,"./toggle-field-mask":34,"array-foreach":3,"resolve-id-refs":16}],36:[function(require,module,exports){
+},{"./select":34,"./toggle-field-mask":35,"array-foreach":3,"resolve-id-refs":16}],37:[function(require,module,exports){
 'use strict';
 const EXPANDED = 'aria-expanded';
 const CONTROLS = 'aria-controls';
@@ -1831,7 +1864,7 @@ module.exports = (button, expanded) => {
   return expanded;
 };
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 const dataset = require('elem-dataset');
 
@@ -1871,4 +1904,4 @@ module.exports = function validate (el) {
   }
 };
 
-},{"../config":26,"elem-dataset":6}]},{},[1]);
+},{"../config":27,"elem-dataset":6}]},{},[1]);

@@ -22,17 +22,46 @@ Tags:
 }
 
 // navbar
-@media screen and (min-width: 951px) {
-    .usa-header-basic .usa-navbar {
-            width: 25%;
-    }
-}    
+.usa-header-extended {
+	border-bottom: none;
+	background-color: $color-gray-lightest;
+	
+	.usa-nav-container {
+		max-width: 100%;
+	}
 
-// nav links
+	.usa-navbar {
+		max-width: 100%;
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
 nav.usa-nav {
-    .usa-nav-close {
-        color: $color-primary;
-    }
+	
+	float: none;
+	padding-top: 0px;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid $color-gray-light;
+
+	@media (min-width: #{$nav-width + 1}) {
+		width: 100%;
+	}
+
+	
+	.usa-nav-inner {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.usa-nav-close {
+		color: $color-primary;
+	}
+}
+
+// section
+.usa-section {
+	padding-top: 50px;
+	padding-bottom: 50px;
 }
 
 // grid layout
@@ -42,6 +71,9 @@ nav.usa-nav {
     p {
         width: 100%;
     }
+	.one {
+		width: 100%;
+	}
     .one-third {
         @include span-responsive(4);
     }
@@ -71,6 +103,11 @@ nav.usa-nav {
 }
 
 footer {
+
+	.usa-footer-primary-section {
+		padding: 1em 0;
+	}
+
     .usa-footer-column {
         @include span-responsive(2);
     }
@@ -79,10 +116,41 @@ footer {
     }
 }
 
-// blog post tease
-.tease img {
-    max-width: 100%;
-    height: auto;
+// hero
+.usa-hero {
+	background-image: none;
+	background: $color-secondary-dark;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, $color-primary-alt-dark, $color-secondary-dark);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, $color-primary-alt-dark, $color-secondary-dark); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+// blog post 
+.post-meta {
+	font-size: 0.8em;
+	text-transform: uppercase;
+}
+
+.tease {
+	margin-bottom: 1.5em;
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	h3 {
+		margin-top: 0;
+	}
+}
+
+// pagination
+ul.pagination {
+	list-style-type: none;
+	li {
+		display: inline-block;
+		margin-right: 10px;
+	}
 }
 
 // sidebar

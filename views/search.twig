@@ -2,10 +2,18 @@
 
 {% block content %}
 <section class="usa-grid usa-section">
-    {% if title %}
-    <h1>{{title}}</h1>
-    {% endif %}
-    <article>
+	<div class="one">
+		<h1>{{title}}</h1>
+		<form class="usa-search" action="{{site.url}}" role="search">
+			<div role="search">
+				<input id="search-field-small" type="search" name="s" value="{{search_query}}" placeholder="Enter search query">
+				<button type="submit">
+				<span><i class="fa fa-search"></i></span>
+				</button>
+			</div>
+		</form>
+	</div>
+    <article class="two-thirds">
         {% if posts %}
         {% for post in posts %}
         	{% include ['tease-'~post.post_type~'.twig', 'tease.twig'] %}
@@ -15,7 +23,7 @@
         {% endif %}
         {% include 'pagination.twig' %}
     </article>
-    <aside>
+    <aside class="one-third">
         {% include 'sidebar.twig' %}
     </aside>
 </secton>
