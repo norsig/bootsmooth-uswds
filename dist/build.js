@@ -22,12 +22,9 @@ var App = function App() {
 
 ;
 
-document.addEventListener("DOMContentLoaded", function (event) {
-
-	// create new App object
-	var $bs = new App();
-	window.$bs = $bs;
-});
+// create new App object
+var $bs = new App();
+window.$bs = $bs;
 
 },{"../node_modules/uswds/src/js/start":31}],2:[function(require,module,exports){
 

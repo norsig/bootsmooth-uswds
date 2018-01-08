@@ -1,16 +1,5 @@
 'use strict';
 
-// set paths
-var config = {
-    sassPaths: [
-        './bootsmooth/sass/',
-        './scss/'
-    ],
-    jsPaths: [
-      './js/scripts.js'
-    ]
-};
-
 // dependency requirements
 var gulp   = require('gulp'),
     sass   = require('gulp-sass'),
@@ -46,7 +35,7 @@ gulp.task('javascript', function() {
 // Watch tasks
 gulp.task('watch', ['build'], function() {
     // styles
-    gulp.watch(['./scss/**/*.scss', './bootsmooth/scss/**/*.scss'], [
+    gulp.watch(['./scss/**/*.scss'], [
         'stylesheet'
     ]);
     

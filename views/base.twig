@@ -31,7 +31,7 @@
 					<button class="usa-accordion-button usa-nav-link" aria-expanded="false" aria-controls="{{item.title|replace({' ': '-'}) }}-nav">
 						<span>{{item.title}}</span>
 					</button>
-					<ul id="{{item.title|replace({' ': '-'}) }}-nav" class="usa-nav-submenu">
+					<ul id="{{item.title|replace({' ': '-'}) }}-nav" class="usa-nav-submenu" aria-hidden="true">
 					{% for child in item.get_children %}
 						<li>
 						<a href="{{child.get_link}}">{{child.title}}</a>
@@ -47,7 +47,7 @@
 				{% endfor %}
 			</ul>
 			<div class="usa-nav-secondary">
-				<form class="usa-search usa-search-small  js-search-form" action="{{site.url}}/" method="GET" aria-hidden="true">
+				<form class="usa-sr-only usa-search usa-search-small  js-search-form" action="{{site.url}}/" method="GET">
 					<div role="search">
 						<label class="usa-sr-only" for="extended-search-field-small">Search small</label>
 						<input id="extended-search-field-small" type="search" name="s">

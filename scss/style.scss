@@ -165,7 +165,10 @@ aside {
         padding-bottom: .8rem;
     }
 	
-	ul {
-		@extend .usa-sidenav-list;
+	.sidebar-widget {
+		ul {
+			@extend .usa-sidenav-list;
+		}
 	}
 }
+ 

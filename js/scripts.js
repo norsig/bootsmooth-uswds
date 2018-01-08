@@ -13,10 +13,6 @@ class App {
 	
 };
 
-document.addEventListener("DOMContentLoaded", function(event) { 
-
-	// create new App object
-	let $bs = new App();
-	window.$bs = $bs;
-	
-});
+// create new App object
+let $bs = new App();
+window.$bs = $bs;
