@@ -7,13 +7,15 @@ var gulp   = require('gulp'),
     csso = require('gulp-csso'),
 	babelify = require('babelify'),
     browserify = require("browserify"),
-    connect = require("gulp-connect"),
+    postcss    = require('gulp-postcss'),
     source = require("vinyl-source-stream");
 
 // Styles task
 gulp.task('stylesheet', function () {
   return gulp.src('./scss/style.scss')
     .pipe(sass().on('error', sass.logError))
+	.pipe(csso())
+	.pipe( postcss([ require('precss'), require('autoprefixer') ]) )
     .pipe(rename('style.css'))
     .pipe(gulp.dest('./'));
 });
